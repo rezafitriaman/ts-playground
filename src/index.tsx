@@ -1,3 +1,7 @@
-import {Circle, E, f, f1, printImportant, R, Shapekind, Square} from "./components/enums";
+import {invokeLater} from "./components/typeCompatibility";
 
-printImportant('WARN', 'This is a message');
+// Unsound - invokeLater "might" provide any number of arguments
+invokeLater([1, 2], (x:number, y:number) => console.log(x + ", " + y));
+
+// Confusing (x and y are actually required) and undiscoverable
+invokeLater([1, 2], (x?:number, y?:number) => console.log(x + ", " + y));
