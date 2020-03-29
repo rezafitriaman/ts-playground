@@ -1,7 +1,6 @@
-import {invokeLater} from "./components/typeCompatibility";
 
-// Unsound - invokeLater "might" provide any number of arguments
-invokeLater([1, 2], (x:number, y:number) => console.log(x + ", " + y));
+import { getSmallPet, Fish, Bird,piranha} from "./components/advanceTypes";
 
-// Confusing (x and y are actually required) and undiscoverable
-invokeLater([1, 2], (x?:number, y?:number) => console.log(x + ", " + y));
+let pet = getSmallPet(piranha);
+
+//console.log(pet.layEggs())

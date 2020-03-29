@@ -1,5 +1,6 @@
 // Introduction #
 
+
 interface Named {
     name : string;
 }
@@ -74,3 +75,41 @@ let status = Status.Ready;
 //status = Color.Green
 
 // Classes #
+
+class Animal {
+    feet: number;
+    constructor(name: string, numFeet: number) { }
+}
+
+class Size {
+    feet: number;
+    constructor(numFeet: number) { }
+}
+
+let a: Animal;
+let s: Size;
+
+//a = s;  // OK
+//s = a;  // OK
+
+// Generics #
+interface Empty<T> {
+    data: T;
+}
+
+let o: Empty<number>;
+let l: Empty<string>;
+
+// o = l;
+
+export function identity <T>(x: T): T {
+    console.log(x)
+    return x;
+}
+
+export let reverse = function<U>(y: U): U {
+    console.log(y);
+    return y;
+}
+
+
