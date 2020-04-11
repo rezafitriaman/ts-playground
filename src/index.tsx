@@ -1,6 +1,4 @@
 
-import { getSmallPet, Fish, Bird,piranha} from "./components/advanceTypes";
+import { buySmallPet, Fish, Bird,piranha} from "./components/advanceTypes";
 
-let pet = getSmallPet(piranha);
-
-//console.log(pet.layEggs())
+let pet = buySmallPet(piranha);
