@@ -1,6 +1,6 @@
 //Our First Interface #
-import * as ts from "typescript/lib/tsserverlibrary";
-import Types = ts.server.Msg.Types;
+//import * as ts from "typescript/lib/tsserverlibrary";
+//import Types = ts.server.Msg.Types;
 
 interface LabeledValue {
     label:string
@@ -39,7 +39,7 @@ interface Point {
     x: 10, y: 20
 };
 
-pl.x = 5;
+pl.x = 5; 
 
 let a: number[] = [1, 2, 3, 4];
 let ro: ReadonlyArray<number> = a;

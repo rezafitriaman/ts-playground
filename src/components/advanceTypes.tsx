@@ -1,3 +1,5 @@
+//import { isPropertyName } from "typescript/lib/tsserverlibrary";
+
 // Intersection Types #
 function extend<First extends object, Second extends object>(first: First, second: Second): First & Second {
     const result: Partial<First & Second> = {};
@@ -386,11 +388,11 @@ interface Triangle {
 
 type Shape = Square | Rectangle | Circle | Triangle;
 
-function assertNever(x: never): never {
+/* function assertNever(x: never): never {
     console.log("Unexpected object: ", x);
-}
+} */
 
-function area(s: Shape) {
+/* function area(s: Shape) {
     switch (s.kind) {
         case 'square': return s.size * s.size;
         case 'rectangle': return s.height * s.width;
@@ -399,7 +401,7 @@ function area(s: Shape) {
         default: return assertNever(s); 
         //case 'triangle': return 0.50 * s.bottom * s.height;
     }
-}
+} */
 
 let square: Square = {
     kind: 'square', 
@@ -446,10 +448,10 @@ class BasicCalculator {
     }
 }
 
-let v = new BasicCalculator(2)   
+/* let v = new BasicCalculator(2)   
 .add(1)        
 .multiply(5)
-.curentValue();
+.curentValue(); */
 
 class ScientificCalculator  extends  BasicCalculator {
     public constructor(value = 0) {
@@ -463,8 +465,177 @@ class ScientificCalculator  extends  BasicCalculator {
     }
 }
 
-let t = new ScientificCalculator(2)
+/* let t = new ScientificCalculator(2)
     .multiply(2)
     .add(1)
     .sin()
-    .curentValue()
+    .curentValue() */
+
+// Index types
+
+function plucky(o: any, propertyNames:any) {
+    return propertyNames.map((n:any) => o[n]);
+}
+
+
+function pluck<T, K extends keyof T>(Object: T, propertyNames:K[]): T[K][] {
+    return propertyNames.map(keys => {
+        return Object[keys]
+    });
+}
+
+interface Car {
+    manufacturer: string;
+    model: string,
+    year: number
+}
+
+let taxi: Car = {
+    manufacturer: "toyota",
+    model: 'Camry',
+    year: 2014
+}
+
+let makeAndModel: string[] = pluck(taxi, ['manufacturer', 'model']);
+let modelYear = pluck(taxi, ['model', 'year'])
+
+function getProperTy<T, K extends keyof T>(object:T, propertyNames: K): T[K] {
+    return object[propertyNames];
+}
+
+let name: string = getProperTy<Car, 'manufacturer'>(taxi, 'manufacturer');
+let model: string = getProperTy(taxi, 'model');
+let year: number = getProperTy(taxi, 'year');
+
+
+//Index types and index signatures
+
+interface Dictionary<T> {
+    [key: string]: T;
+}
+
+let keys: keyof Dictionary<number>; // number
+//let value: Dictionary<number>["foo"]; // Error, Property 'foo' does not exist on type 'Dictionary<number>'.
+let value: Dictionary<number>[42]; // number
+
+keys = 3
+
+//Mapped types
+
+/* interface PersonPartial {
+    name?: string;
+    age?: number;
+} */
+
+interface PersonReadonly {
+    readonly name: string;
+    readonly age: number;
+  }
+
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P]
+}
+
+/* type Partial<T> = {
+    [P in keyof T]?: T[P];
+}; */
+
+type PersonPartial = Partial<Person>;
+type ReadonlyPerson = Readonly<Person>;
+
+// Use this:
+type PartialWithNewMember<T> = {
+    [P in keyof T]?: T[P];
+  } & { newMember: boolean }
+  
+
+  type Keys = 'option1' | 'option2';
+  type Flags = {[K in Keys]: boolean};
+
+  type Flags2 = {
+      option1: boolean;
+      option2: boolean;
+  }
+
+type NullablePerson = { [P in keyof Person]: Person[P] | null };
+type PartialPerson = { [P in keyof Person]?: Person[P] };
+
+type Nullable<T> = { [P in keyof T]: T[P] | null };
+type Partial<T> = { [P in keyof T]?: T[P] };
+
+type Proxy<T> = {
+    get(): T;
+    set(value: T): void;
+}
+type Proxify<T> = {
+    [P in keyof T]: Proxy<T[P]>;
+}
+
+/* function proxify<T>(o: T): Proxify<T> {
+    // ... wrap proxies ...
+}
+let proxyProps = proxify(props); */
+
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+
+type ThreeStringProps = Record<"prop1" | "prop2" | "prop3", string>;
+
+//Inference from mapped types
+
+function unproxify<T>(t: Proxify<T>): T {
+    let result = {} as T;
+    for (const k in t) {
+        result[k] = t[k].get();
+    }
+    return result;
+}
+
+/* let originalProps = unproxify(proxyProps); */
+
+//Conditional Types # 
+//T extend U ? X: Y 
+
+//declare function f<T extends boolean>(x: T): T extends true ? string : number;
+
+// type is 'string | number'
+//let x = f(Math.random() < 0.5)
+
+type TypeName<T> =
+    T extends string ? 'string': 
+    T extends number ? "number" :
+    T extends boolean ? "boolean" :
+    T extends undefined ? "undefined" :
+    T extends Function ? "function" :
+    "object";
+
+type T0 = TypeName<string>;
+type T1 = TypeName<"a">;  // "string"
+type T2 = TypeName<true>;  // "boolean"
+type T3 = TypeName<() => void>;  // "function"
+type T4 = TypeName<string[]>;  // "object"
+
+/* interface Fooo {
+    propA: boolean;
+    propB: boolean;
+}
+
+declare function ea<T>(x: T): T extends Fooo ? string : number;
+
+
+function fu<U>(x: U) {
+    console.log(typeof x)
+    let a = ee(x);
+
+    let b: string | number = a;
+}
+
+fu(1); */
+
+// Distributive conditional types #
+
